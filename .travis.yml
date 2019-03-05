@@ -1,0 +1,23 @@
+language: java
+sudo: false
+env:
+  - RELEASE_TAG="release-$TRAVIS_BUILD_NUMBER"
+if: tag IS blank
+
+jobs:
+  include:
+    - stage: build and publish
+      language: java
+      jdk: oraclejdk8
+      script: mvn clean install
+      before_deploy:
+        - git config --local user.name "elangocse"
+        - git config --local user.email "elangocse@gmail.com"
+        - git tag -f $RELEASE_TAG
+      deploy:
+        provider: releases
+        api_key: $GITHUB_OAUTH_TOKEN
+        file: "target/SpringBootHelloWorld-0.0.1-SNAPSHOT.jar"
+        skip_cleanup: true
+
+
